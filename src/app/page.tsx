@@ -71,7 +71,7 @@ export default async function Home() {
                   {tagline}
                 </p>
               </div>
-              <div className="lg:col-span-5 flex justify-end lg:justify-start lg:pl-24 lg:pt-32">
+              <div className="lg:col-span-5 flex justify-end lg:justify-start lg:pl-24" style={{ paddingTop: '125px' }}>
                 <img
                   src="https://i.postimg.cc/h4b0vR1L/104504331-4k0cg90anb.jpg"
                   alt="Profile"

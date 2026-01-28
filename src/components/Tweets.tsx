@@ -85,13 +85,13 @@ export default function Tweets({ featuredOnly = false, limit = 3, showViewAll = 
           </div>
         </div>
 
-        {/* Tweets Grid */}
+        {/* Tweets Grid - Full Width */}
         <div className="lg:col-span-9">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             {tweets.map((tweet) => (
-              <div key={tweet.id} className="bg-[#0f0f0f] border border-[#1a1a1a] overflow-hidden">
+              <div key={tweet.id} className="bg-[#0f0f0f] border border-[#1a1a1a] p-6">
                 {tweet.tweetId && !failedTweets.has(tweet.tweetId) ? (
-                  <div className="[&_.react-tweet-theme]:!bg-transparent [&_.react-tweet-theme]:!border-none">
+                  <div className="tweet-embed-wrapper">
                     <Tweet 
                       id={tweet.tweetId} 
                       onError={() => handleTweetError(tweet.tweetId)}
@@ -102,9 +102,10 @@ export default function Tweets({ featuredOnly = false, limit = 3, showViewAll = 
                     href={tweet.tweetUrl || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block p-6 hover:bg-[#141414] transition-colors"
+                    className="block hover:bg-[#141414] transition-colors"
                   >
-                    <p className="text-[#a3a3a3] text-sm leading-relaxed mb-4 line-clamp-4">
+                    {/* White text for better visibility */}
+                    <p className="text-white text-base leading-relaxed mb-4">
                       {tweet.content}
                     </p>
                     <div className="flex justify-between items-center">
