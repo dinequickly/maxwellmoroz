@@ -62,7 +62,7 @@ export default async function Home() {
           
           {/* Header Section with Photo */}
           <header className="py-16 sm:py-24">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               <div className="lg:col-span-7">
                 <h1 className="font-display text-display text-[#f5f5f5] leading-[0.9]">
                   {siteTitle}
@@ -71,12 +71,12 @@ export default async function Home() {
                   {tagline}
                 </p>
               </div>
-              <div className="lg:col-span-5 flex justify-end lg:justify-start lg:pl-24" style={{ paddingTop: '125px' }}>
+              <div className="lg:col-span-5 flex justify-end lg:justify-start lg:pl-24">
                 <img
                   src="https://i.postimg.cc/h4b0vR1L/104504331-4k0cg90anb.jpg"
                   alt="Profile"
-                  width={250}
-                  height={200}
+                  width={200}
+                  height={160}
                   className="object-cover grayscale"
                 />
               </div>
