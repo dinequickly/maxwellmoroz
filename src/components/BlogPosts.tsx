@@ -14,6 +14,8 @@ interface BlogPost {
   slug: string;
 }
 
+const PAPER_PDF_PATH = '/papers/main-4.pdf';
+
 // Truncate text to ~150 words
 function truncateToWords(text: string, wordCount: number = 150): string {
   const words = text.trim().split(/\s+/);
@@ -71,12 +73,17 @@ export default function BlogPosts() {
             {posts.length === 0 ? (
               <p className="text-[#525252] text-sm">No published blogs yet.</p>
             ) : (
-              posts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/blog/${post.id}`}
-                  className="group block py-8 border-b border-[#1a1a1a] hover:border-[#333] transition-colors"
-                >
+              posts.map((post) => {
+                const isPaper = post.tags.some(
+                  (tag) => tag.toLowerCase() === 'paper-econ'
+                );
+                const href = isPaper ? PAPER_PDF_PATH : `/blog/${post.id}`;
+                return (
+                  <Link
+                    key={post.id}
+                    href={href}
+                    className="group block py-8 border-b border-[#1a1a1a] hover:border-[#333] transition-colors"
+                  >
                   <div className="flex justify-between items-start gap-8">
                     <div className="flex-1">
                       <div className="flex items-center gap-4 mb-3">
@@ -94,8 +101,9 @@ export default function BlogPosts() {
                     </div>
                     <ArrowUpRight className="w-5 h-5 text-[#262626] group-hover:text-[#525252] transition-colors flex-shrink-0 mt-1" />
                   </div>
-                </Link>
-              ))
+                  </Link>
+                );
+              })
             )}
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { notion, extractText } from '@/lib/notion';
@@ -81,6 +81,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   if (!post) {
     notFound();
+  }
+
+  const isPaper = post.tags.some((tag: string) => tag.toLowerCase() === 'paper-econ');
+  if (isPaper) {
+    redirect('/papers/main-4.pdf');
   }
 
   return (
