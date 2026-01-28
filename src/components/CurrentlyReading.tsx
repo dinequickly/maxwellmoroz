@@ -144,23 +144,39 @@ export default function CurrentlyReading() {
               {/* Shelf */}
               {shelfBooks.length > 0 && (
                 <div className="mt-8 pt-8 border-t border-[#262626]">
-                  <p className="text-xs tracking-[0.15em] text-[#525252] uppercase mb-4">
-                    Also on the shelf
+                  <p className="text-sm tracking-[0.15em] text-[#737373] uppercase mb-5">
+                    Also reading
                   </p>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                     {shelfBooks.map((book, index) => (
                       <a
                         key={index}
                         href={book.link || '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-[#737373] hover:text-[#f5f5f5] transition-colors border-b border-[#262626] hover:border-[#737373] pb-0.5"
+                        className="group"
                       >
-                        {book.title.length > 35 ? book.title.slice(0, 35) + '...' : book.title}
+                        <div className="aspect-[2/3] w-full overflow-hidden bg-[#141414] border border-[#1a1a1a] group-hover:border-[#333] transition-colors">
+                          {book.coverImage ? (
+                            <img
+                              src={book.coverImage}
+                              alt={`${book.title} cover`}
+                              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                            />
+                          ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-[#333]">
+                              <BookOpen className="w-6 h-6 mb-2" />
+                              <span className="text-[10px] tracking-wider uppercase">No Cover</span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="mt-2 text-xs text-[#737373] group-hover:text-[#f5f5f5] transition-colors">
+                          {book.title.length > 35 ? book.title.slice(0, 35) + '...' : book.title}
+                        </p>
                       </a>
                     ))}
                     {books.length > 6 && (
-                      <span className="text-xs text-[#525252]">
+                      <span className="text-xs text-[#525252] self-end">
                         +{books.length - 6} more
                       </span>
                     )}
