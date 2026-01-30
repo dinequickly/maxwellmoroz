@@ -82,6 +82,11 @@ export default function Experience() {
                       {job.role}
                       <ArrowUpRight className="w-4 h-4 text-[#333] group-hover:text-[#737373] transition-colors opacity-0 group-hover:opacity-100" />
                     </h3>
+                    {job.description && (
+                      <p className="mt-2 text-[#525252] text-sm leading-relaxed group-hover:text-[#737373] transition-colors">
+                        {job.description}
+                      </p>
+                    )}
                   </div>
                   
                   {/* Company */}
@@ -102,11 +107,7 @@ export default function Experience() {
                   </div>
                 </div>
                 
-                {job.description && (
-                  <p className="mt-4 text-[#525252] text-sm leading-relaxed max-w-2xl group-hover:text-[#737373] transition-colors">
-                    {job.description}
-                  </p>
-                )}
+
               </a>
             ))}
           </div>
