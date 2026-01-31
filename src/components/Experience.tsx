@@ -12,9 +12,12 @@ interface Job {
   endDate?: string;
   location: string;
   description: string;
+  url?: string;
 }
 
 const LINKEDIN_URL = 'https://linkedin.com/in/maxwellmoroz';
+
+const getJobUrl = (job: Job) => job.url || LINKEDIN_URL;
 
 export default function Experience() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -70,7 +73,7 @@ export default function Experience() {
             {jobs.map((job, index) => (
               <a
                 key={job.id}
-                href={LINKEDIN_URL}
+                href={getJobUrl(job)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group block py-8 border-b border-[#1a1a1a] hover:border-[#333] transition-colors"

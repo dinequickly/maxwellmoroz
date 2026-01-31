@@ -38,6 +38,12 @@ export async function GET() {
       const dates =
         formattedStart && formattedEnd ? `${formattedStart} — ${formattedEnd}` : '';
       
+      // Fix URL - ensure it has https:// prefix
+      let url = extractText(properties.URL?.rich_text) || '';
+      if (url && !url.startsWith('http')) {
+        url = `https://${url}`;
+      }
+
       return {
         id: page.id,
         role: extractText(properties.Role?.title) || '',
@@ -47,6 +53,7 @@ export async function GET() {
         endDate,
         location: extractText(properties.Location?.rich_text) || '',
         description: extractText(properties.Description?.rich_text) || '',
+        url,
       };
     });
 
