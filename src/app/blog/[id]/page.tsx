@@ -37,6 +37,23 @@ async function getBlogPost(id: string) {
         content += '> ' + extractText(block.quote?.rich_text) + '\n\n';
       } else if (block.type === 'callout') {
         content += extractText(block.callout?.rich_text) + '\n\n';
+      } else if (block.type === 'image') {
+        const imageUrl = block.image?.file?.url || block.image?.external?.url || '';
+        const caption = extractText(block.image?.caption) || '';
+        content += `![${caption}](${imageUrl})\n\n`;
+      } else if (block.type === 'table') {
+        // Tables need to be fetched separately
+        const tableRows = await notion.blocks.children.list({ block_id: block.id });
+        const tableData: string[][] = [];
+        for (const row of tableRows.results as any[]) {
+          if (row.type === 'table_row') {
+            const cells = row.table_row?.cells?.map((cell: any[]) => extractText(cell)) || [];
+            tableData.push(cells);
+          }
+        }
+        if (tableData.length > 0) {
+          content += 'TABLE:' + JSON.stringify(tableData) + '\n\n';
+        }
       }
     }
 
@@ -140,6 +157,59 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               }
               if (paragraph.startsWith('• ')) {
                 return <li key={i} className="ml-4 text-[#a3a3a3]">{paragraph.slice(2)}</li>;
+              }
+              // Handle images
+              if (paragraph.startsWith('![')) {
+                const match = paragraph.match(/^!\[(.*?)\]\((.*?)\)$/);
+                if (match) {
+                  const [, alt, url] = match;
+                  return (
+                    <figure key={i} className="my-8">
+                      <img 
+                        src={url} 
+                        alt={alt} 
+                        className="w-full rounded-lg border border-[#262626]"
+                      />
+                      {alt && <figcaption className="text-center text-sm text-[#525252] mt-2">{alt}</figcaption>}
+                    </figure>
+                  );
+                }
+              }
+              // Handle tables
+              if (paragraph.startsWith('TABLE:')) {
+                try {
+                  const tableData = JSON.parse(paragraph.slice(6));
+                  if (Array.isArray(tableData) && tableData.length > 0) {
+                    return (
+                      <div key={i} className="my-8 overflow-x-auto">
+                        <table className="w-full border-collapse">
+                          <thead>
+                            <tr className="border-b border-[#333]">
+                              {tableData[0].map((cell: string, j: number) => (
+                                <th key={j} className="text-left py-3 px-4 text-[#f5f5f5] font-medium text-sm">
+                                  {cell}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {tableData.slice(1).map((row: string[], rowIndex: number) => (
+                              <tr key={rowIndex} className="border-b border-[#1a1a1a]">
+                                {row.map((cell: string, j: number) => (
+                                  <td key={j} className="py-3 px-4 text-sm text-[#a3a3a3]">
+                                    {cell}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    );
+                  }
+                } catch {
+                  // Invalid table data, render as text
+                }
               }
               if (paragraph.trim()) {
                 return <p key={i} className="mb-6">{paragraph}</p>;
