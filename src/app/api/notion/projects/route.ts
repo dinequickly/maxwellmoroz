@@ -29,6 +29,7 @@ export async function GET() {
         year: properties.Year?.number?.toString() || '',
         githubUrl: properties.GitHub?.url || '',
         liveUrl: properties.Live?.url || '',
+        paperUrl: properties.Paper?.url || '',
         tags: properties.Tags?.multi_select?.map((tag: any) => tag.name) || [],
         image: extractFiles(properties.Image?.files) || null,
       };

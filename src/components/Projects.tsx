@@ -10,8 +10,16 @@ interface Project {
   year: string;
   githubUrl: string;
   liveUrl: string;
+  paperUrl: string;
   tags: string[];
   image: string | null;
+}
+
+function openProjectUrl(project: Project) {
+  const url = project.paperUrl || project.liveUrl || project.githubUrl;
+  if (url) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 }
 
 export default function Projects() {
@@ -66,12 +74,10 @@ export default function Projects() {
         <div className="lg:col-span-9">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {projects.map((project) => (
-              <a
+              <div
                 key={project.id}
-                href={project.liveUrl || project.githubUrl || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block"
+                onClick={() => openProjectUrl(project)}
+                className="group block cursor-pointer"
               >
                 {/* Project Card */}
                 <div className="bg-[#0f0f0f] border border-[#1a1a1a] hover:border-[#333] transition-colors p-8 h-full flex flex-col">
@@ -109,18 +115,41 @@ export default function Projects() {
                   {/* Links hint */}
                   <div className="mt-8 pt-6 border-t border-[#1a1a1a] flex gap-6">
                     {project.githubUrl && (
-                      <span className="text-xs text-[#404040] group-hover:text-[#525252] transition-colors tracking-wide uppercase">
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xs text-[#404040] hover:text-[#737373] transition-colors tracking-wide uppercase"
+                      >
                         GitHub →
-                      </span>
+                      </a>
                     )}
                     {project.liveUrl && (
-                      <span className="text-xs text-[#404040] group-hover:text-[#525252] transition-colors tracking-wide uppercase">
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xs text-[#404040] hover:text-[#737373] transition-colors tracking-wide uppercase"
+                      >
                         Live Demo →
-                      </span>
+                      </a>
+                    )}
+                    {project.paperUrl && (
+                      <a
+                        href={project.paperUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xs text-[#404040] hover:text-[#737373] transition-colors tracking-wide uppercase"
+                      >
+                        Paper →
+                      </a>
                     )}
                   </div>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
         </div>
