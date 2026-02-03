@@ -119,8 +119,8 @@ export default async function Home() {
           </div>
 
           {/* Substack Newsletter Section */}
-          <div id="newsletter" className="py-24">
-            <iframe src="https://maxwellmoroz.substack.com/embed" width="480" height="320" style={{border:"1px solid #EEE", background:"white"}} frameBorder="0" scrolling="no"></iframe>
+          <div id="newsletter" className="py-24 flex justify-center">
+            <iframe src="https://maxwellmoroz.substack.com/embed" width="480" height="320" style={{border:"1px solid #EEE", background:"#0a0a0a"}} frameBorder="0" scrolling="no"></iframe>
           </div>
 
           {/* Footer */}
