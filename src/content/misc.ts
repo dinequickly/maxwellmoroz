@@ -10,9 +10,9 @@ export interface Book {
 
 export const reading: Book[] = [
   {
-    title: 'Notes from the Underground',
-    author: 'Fyodor Dostoevsky',
-    coverImage: 'https://almabooks.com/wp-content/uploads/2016/10/9781847493743.jpg',
+    title: "Dante's Inferno",
+    author: 'Dante Alighieri',
+    coverImage: '/books/dantes-inferno.jpg',
     status: 'Reading',
   },
   {
@@ -22,9 +22,9 @@ export const reading: Book[] = [
     status: 'Reading',
   },
   {
-    title: 'Ulysses',
-    author: 'James Joyce',
-    coverImage: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/JoyceUlysses2.jpg',
+    title: 'Good to Great',
+    author: 'Jim Collins',
+    coverImage: '/books/good-to-great.jpg',
     status: 'Reading',
   },
 ];
