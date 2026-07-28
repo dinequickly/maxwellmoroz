@@ -1,132 +1,267 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Design tokens
+   ============================================================ */
 :root {
-  --background: #0a0a0a;
-  --foreground: #f5f5f5;
-  --muted: #737373;
-  --border: #262626;
-  --accent: #e5e5e5;
-  
-  /* React Tweet dark theme overrides */
-  --tweet-bg-color: #0f0f0f;
-  --tweet-bg-color-hover: #141414;
-  --tweet-color-blue: #a3a3a3;
-  --tweet-color-blue-hover: #f5f5f5;
-  --tweet-font-color: #f5f5f5;
-  --tweet-font-color-secondary: #a3a3a3;
-  --tweet-border-color: #1a1a1a;
-  --tweet-skeleton-bg-color: #1a1a1a;
+  --bg: #08080b;
+  --bg-raised: #0e0e12;
+  --fg: #ededef;
+  --fg-soft: #a7a7ad;
+  --fg-faint: #6b6b72;
+  --fg-ghost: #3a3a40;
+  --line: #1c1c22;
+  --line-soft: #141418;
+  --accent: #c9a86a;        /* muted editorial gold */
+  --accent-soft: #d9c49a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-fg: var(--fg);
+  --color-fg-soft: var(--fg-soft);
+  --color-fg-faint: var(--fg-faint);
+  --color-fg-ghost: var(--fg-ghost);
+  --color-line: var(--line);
   --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Editorial Typography */
-.font-display {
-  font-family: 'Times New Roman', Times, Georgia, serif;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+/* Faint radial glow anchored top-center — adds depth without noise. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 50% -10%, rgba(201, 168, 106, 0.06), transparent 70%),
+    radial-gradient(50rem 50rem at 100% 0%, rgba(120, 130, 160, 0.045), transparent 65%);
 }
 
-.font-display-bold {
-  font-family: 'Times New Roman', Times, Georgia, serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+/* Film grain — fixed, never attached to scrolling content. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Large Display Text */
+/* ============================================================
+   Type utilities
+   ============================================================ */
+.font-display { font-family: var(--font-display); font-optical-sizing: auto; }
+.font-serif-body { font-family: var(--font-serif); }
+.font-mono-ui { font-family: var(--font-mono); }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
 .text-display {
-  font-size: clamp(3rem, 8vw, 6rem);
-  line-height: 0.95;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.9rem, 9vw, 7rem);
+  line-height: 0.92;
   letter-spacing: -0.03em;
 }
 
-.text-display-sm {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1;
+::selection { background: var(--accent); color: #0a0a0a; }
+
+::-webkit-scrollbar { width: 9px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 9px; }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-ghost); }
+
+/* ============================================================
+   Scroll-reveal (toggled by IntersectionObserver)
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   Editorial article prose (react-markdown output)
+   ============================================================ */
+.prose-editorial {
+  font-family: var(--font-serif);
+  color: var(--fg-soft);
+  font-size: 1.225rem;
+  line-height: 1.78;
+  letter-spacing: 0.003em;
+}
+.prose-editorial > * + * { margin-top: 1.55rem; }
+
+.prose-editorial p { text-wrap: pretty; }
+.prose-editorial strong { color: var(--fg); font-weight: 600; }
+.prose-editorial em { font-style: italic; }
+
+.prose-editorial h1,
+.prose-editorial h2,
+.prose-editorial h3 {
+  font-family: var(--font-display);
+  color: var(--fg);
+  font-weight: 400;
   letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.prose-editorial h1 { font-size: 2.1rem; margin-top: 3.4rem; }
+.prose-editorial h2 { font-size: 1.72rem; margin-top: 3rem; }
+.prose-editorial h3 { font-size: 1.32rem; margin-top: 2.4rem; color: var(--fg); }
+.prose-editorial h2 + p,
+.prose-editorial h3 + p { margin-top: 1rem; }
+
+.prose-editorial a {
+  color: var(--fg);
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 1.18em;
+  transition: background-size 0.3s ease, color 0.3s ease;
+  padding-bottom: 1px;
+}
+.prose-editorial a:hover { color: var(--accent-soft); }
+
+.prose-editorial ul,
+.prose-editorial ol { padding-left: 1.4rem; }
+.prose-editorial ul { list-style: none; }
+.prose-editorial ul > li { position: relative; padding-left: 1.1rem; }
+.prose-editorial ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.82em;
+  width: 5px; height: 5px;
+  border-radius: 9px;
+  background: var(--accent);
+  opacity: 0.8;
+}
+.prose-editorial ol { list-style: decimal; }
+.prose-editorial ol > li::marker { color: var(--fg-faint); font-family: var(--font-mono); font-size: 0.85em; }
+.prose-editorial li + li { margin-top: 0.5rem; }
+
+.prose-editorial blockquote {
+  border-left: 2px solid var(--accent);
+  padding: 0.2rem 0 0.2rem 1.5rem;
+  margin: 2.2rem 0;
+  color: var(--fg);
+  font-style: italic;
+  font-size: 1.32rem;
+  line-height: 1.6;
+}
+.prose-editorial blockquote p { margin-top: 0.8rem; }
+.prose-editorial blockquote p:first-child { margin-top: 0; }
+.prose-editorial blockquote strong { font-style: normal; }
+
+.prose-editorial figure,
+.prose-editorial .md-figure { display: block; margin: 2.6rem 0; }
+.prose-editorial img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+.prose-editorial figcaption,
+.prose-editorial .md-cap,
+.prose-editorial img + em {
+  display: block;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-faint);
+  margin-top: 0.75rem;
+  font-style: normal;
 }
 
-/* Elegant Dividers */
-.divider-elegant {
+.prose-editorial hr {
+  border: none;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  background: var(--line);
+  margin: 3rem 0;
 }
 
-/* Subtle hover effects */
-.hover-lift {
-  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+.prose-editorial code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  padding: 0.1em 0.4em;
+  color: var(--accent-soft);
 }
 
-.hover-lift:hover {
-  transform: translateY(-4px);
+/* Tables */
+.prose-editorial .table-wrap { overflow-x: auto; margin: 2.4rem 0; }
+.prose-editorial table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
 }
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+.prose-editorial thead th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--line);
 }
-
-::-webkit-scrollbar-track {
-  background: var(--background);
+.prose-editorial tbody td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--fg-soft);
+  vertical-align: top;
 }
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
-}
-
-/* Selection */
-::selection {
-  background: var(--foreground);
-  color: var(--background);
-}
-
-/* React Tweet Custom Styles */
-.react-tweet-theme {
-  --tweet-bg-color: #0f0f0f !important;
-  --tweet-bg-color-hover: #141414 !important;
-  --tweet-font-color: #f5f5f5 !important;
-  --tweet-font-color-secondary: #a3a3a3 !important;
-  --tweet-border-color: #1a1a1a !important;
-  --tweet-color-blue: #f5f5f5 !important;
-  --tweet-color-blue-hover: #ffffff !important;
-}
-
-.react-tweet-theme article {
-  background: #0f0f0f !important;
-  border: 1px solid #1a1a1a !important;
-}
-
-.react-tweet-theme p,
-.react-tweet-theme span,
-.react-tweet-theme div {
-  color: #f5f5f5 !important;
-}
-
-.react-tweet-theme a {
-  color: #a3a3a3 !important;
-}
-
-.react-tweet-theme a:hover {
-  color: #f5f5f5 !important;
-}
+.prose-editorial tbody tr:hover td { background: rgba(255, 255, 255, 0.015); }

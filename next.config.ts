@@ -2,22 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.gr-assets.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.gr-assets.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.gr-assets.com',
-      },
-    ],
-    unoptimized: true,
+  // Pin the workspace root so Next ignores the stray parent lockfile.
+  turbopack: {
+    root: __dirname,
   },
 };
 
